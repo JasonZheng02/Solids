@@ -9,7 +9,7 @@ def scanline_convert(polygons, i, screen, zbuffer, color ):
     p2 = polygons[i+1]
     p3 = polygons[i+2]
 
-    if(p1[1] >= p2[1] and p1[1] >= p3[1]):
+    if(p1[1] == max(p1[1], p2[1], p3[1])):
         top = p1
         if(p2[1] > p3[1]):
             middle = p2
@@ -17,7 +17,7 @@ def scanline_convert(polygons, i, screen, zbuffer, color ):
         else:
             middle = p3
             bottom = p2
-    elif(p2[1] >= p1[1] and p2[1] >= p3[1]):
+    elif(p2[1] == max(p1[1], p2[1], p3[1])):
         top = p2
         if(p1[1] > p3[1]):
             middle = p1
@@ -38,7 +38,7 @@ def scanline_convert(polygons, i, screen, zbuffer, color ):
     x1 = bottom[0]
     z0 = bottom[2]
     z1 = bottom[2]
-    y = int(bottom[1])
+    y  = int(bottom[1])
 
     dx0 = (top[0] - bottom[0]) / (top[1] - bottom[1])
     dz0 = (top[2] - bottom[2]) / (top[1] - bottom[1])
@@ -50,11 +50,11 @@ def scanline_convert(polygons, i, screen, zbuffer, color ):
         dx1 = 0
         dz1 = 0
     if(top[1] - middle[1] != 0):
-        dx1_1 = (top[0] - middle[0]) / (top[1] - middle[1])
-        dz1_1 = (top[2] - middle[2]) / (top[1] - middle[1])
+        dx1_flip = (top[0] - middle[0]) / (top[1] - middle[1])
+        dz1_flip = (top[2] - middle[2]) / (top[1] - middle[1])
     else:
-        dx1_1 = 0
-        dz1_1 = 0
+        dx1_flip = 0
+        dz1_flip = 0
 
     while(y < middle[1]):
         if((x1 <= top[0] or x1 <= middle[0] or x1 <= bottom[0]) and (x0 >= top[0] or x0 >= middle[0] or x0 >= bottom[0])):
@@ -71,8 +71,8 @@ def scanline_convert(polygons, i, screen, zbuffer, color ):
     x1 = middle[0]
     z1 = middle[2]
     y = int(middle[1])
-    dx1 = dx1_1
-    dz1 = dz1_1
+    dx1 = dx1_flip
+    dz1 = dz1_flip
     while(y <= top[1]):
         if((x1 <= top[0] or x1 <= middle[0] or x1 <= bottom[0]) and (x0 >= top[0] or x0 >= middle[0] or x0 >= bottom[0])):
             draw_scanline(screen, zbuffer, color, int(x0), int(x1), y, z0, z1)
